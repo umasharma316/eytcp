@@ -38,7 +38,7 @@ Route::group(['middleware' => 'auth'], function ()
     Route::any('/categorywisedata', 'eytcpController@categorywisedata')->name('categorywisedata');
 	Route::any('/sendmailcred', 'EytcpController@sendmailcred')->name('sendmailcred');	
 		
-	Route::any('/TCPRegistration', 'eytcpController@TCPRegistration')->name('TCPRegistration');
+	Route::any('tcp_Registration', 'eytcpController@TCPRegistration')->name('tcp_Registration');
 	Route::post('/tbt/profile/update', [
 	'uses' 			=> 'Tbt\TeamprofileController@update',
 	'as'   			=> 'tbtUpdate'

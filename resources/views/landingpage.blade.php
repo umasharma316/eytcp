@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('layouts.tcp_layout')
 @section('title', 'e-Yantra Teacher Training Program')
 <html>
     <head>

@@ -9,7 +9,7 @@
     <div class="col s5 contact-right">
       QUICK CONTACTS<br/>
       022-2572-0184<br/>
-      <a href="mailto:resources@e-yantra.org">resources@e-yantra.org</a><br/><br/>
+      <a href="mailto:resources@e-yantra.org">support@e-yantra.org</a><br/><br/>
 
       <!--Facebook-->
       <a href="https://www.facebook.com/eyantra" class="icons-sm fb-ic"><i class="fa fa-facebook"></i></a>

@@ -1,4 +1,4 @@
-@extends('layouts.mooc_layout')
+@extends('layouts.tcp_layout')
 @section('style')
 <style type="text/css">
     nav {

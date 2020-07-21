@@ -7,6 +7,10 @@ use App\Model\tbtStatusChallenge;
 use App\Model\TbtTeacherDtls;
 use App\Model\tcpUsersLogin;
 use App\Model\ElsiTeacherDtl;
+use App\Model\CollegeDetails;
+use App\Model\ElsiDepartments;
+use App\Model\ElsiDesignations;
+
 use Illuminate\Support\Str;
 use Hash;
 use Mail;
@@ -84,7 +88,15 @@ class eytcpController extends Controller
 
 	public function TCPRegistration(Request $request)
 	{
-		return view('eytcp_registration');
+		$designation = ElsiDesignations::select('id', 'name')->orderBy('name')->get();			
+		$department = ElsiDepartments::select('id', 'name')->orderBy('name')->get();
+		$college = CollegeDetails::select('clg_code','college_name')->orderBy('college_name')->get();
+		log::info(auth()->user()->username);
+		$getteacher_dtl=ElsiTeacherDtl::select('ecd.*', 'elsi_teachers_dtls.*')
+			->where('emailid', auth()->user()->username)
+			->join('elsi_college_dtls as ecd', 'ecd.id', '=', 'elsi_teachers_dtls.clg_id')
+			->first();	
+			return view('eytcp_registration', ['designation' => $designation,'department' => $department,'college' => $college,'teacher' => $getteacher_dtl]);
 	}	
 
 	public function editProfile(Request $request)
