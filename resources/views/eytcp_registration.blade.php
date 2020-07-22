@@ -19,18 +19,26 @@
     <div class="row " style="margin-top: 40px;">
       <div class="card horizontal z-depth-2">
         <div class="col m12">
+          @if(Session::has('success'))
+            <h5 class='alert alert-success' align="center">{{Session::get('success')}}</h5>
+        @endif
           <div class="card-content">
           <h4>Your Profile Information</h4>
             <br>
-          <form>
+         
+            @if($errors->any())
+            <div class="alert alert-danger" role='alert'>
+            @foreach($errors->all() as $error)
+            <p class="text-danger">{!!$error!!}</p>
+            @endforeach
+            </div>
+            <hr/>
+            @endif
+
+
           <table width="500px" style="border: 1px; border-collapse: collapse;
             border-radius: 10px !important;">
-              <tr>
-                <td>College Name:</td>
-                <td>
-                  <label id="colg_id">{!! $teacher->college_name !!}, {!! $teacher->district !!}, {!! $teacher->state !!}</label>
-                </td>
-              </tr>
+              
               <tr>
                 <td>Name:</td>
                 <td>
@@ -50,6 +58,12 @@
                 </td>
               </tr>
               <tr>
+                <td>College Name:</td>
+                <td>
+                  <label id="colg_id">{!! $teacher->college_name !!}, {!! $teacher->district !!}, {!! $teacher->state !!}</label>
+                </td>
+              </tr>
+              <tr>
                 <td>Department:</td>
                 <td>
                   <label id="department">{!! $teacher->department!!}</label>
@@ -61,12 +75,12 @@
                   <label id="designation">{!! $teacher->designation!!}</label>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td>Gender:</td>
                 <td>
                   <label id="gender">{!! $teacher->gender!!}</label>
                 </td>
-              </tr>  
+              </tr> -->  
           </table>
         <br>
           <div class='col s12 col offset 4'>
@@ -74,7 +88,7 @@
 
             
           </div>
-         </form>  
+  
           </div>
         </div>
       </div>
@@ -109,57 +123,54 @@
           </div>
         </div>
         <div class="col m4" align="left">
-          <label>Select College</label>
-            <select id="college" name="college">
-                <option value="" disabled selected>Choose your option</option>                
-            @foreach($college as $college)
-            @if(old('college')==$college->name)
-                  <option value="{!!$college->name!!}" selected>{!!$college->name!!}</option>
-                @else
-                  <option value="{!!$college->name!!}">{!!$college->name!!}</option>
-                @endif
-            @endforeach
-            </select>    
+          <label>College</label>
+          <select class="form-control" id="inputcollege" name="inputcollege" value="{{Request::old('inputcollege')}}">
+              <option hidden></option>
+               @foreach ($college as $college)
+            @if (old('inputcollege')==$college->id)
+                <option value={{$college->id}} selected>{{ $college->college_name }}</option>
+            @else
+                <option value={{$college->id}} >{{ $college->college_name }}</option>
+            @endif
+          @endforeach
+          </select> 
+
+
+          
           </div>
         <div class="col m4" align="left">
           <label>Select Department</label>
-            <select id="Department" name="department">
-                <option value="" disabled selected>Choose your option</option>                
-            @foreach($department as $department)
-            @if(old('department')==$department->name)
-                <option value="{!!$department->name!!}" selected>{!!$department->name!!}</option>
-            @else
-                <option value="{!!$department->name!!}">{!!$department->name!!}</option>
-            @endif
-            @endforeach
-            </select>    
+          <select class="form-control" id="inputdepartment" name="inputdepartment" value="{{Request::old('inputdepartment')}}">
+              <option hidden></option>
+                @foreach($department as $department)
+                  <option value="{{$department->id}}" {{Request::old('inputdepartment') == $department->id ? 'selected' : ''  }}>{{$department->name}}</option>
+                @endforeach
+          </select> 
           </div>
         <div class="col m4" align="left">
           <label>Select Designation</label>
-            <select id="Designation" name="designation">
-                <option value="" disabled selected>Choose your option</option>                
-            @foreach($designation as $designation)
-             @if(old('designation')==$designation->name)             
-                <option value="{!!$designation->name!!}" selected>{!!$designation->name!!}</option>
-              @else
-                <option value="{!!$designation->name!!}">{!!$designation->name!!}</option>
-              @endif
-            @endforeach
-            </select>    
-          </div>
-        <div class="col m4" align="left">
+          <select class="form-control" id="inputdesignation" name="inputdesignation" 
+           value="{{Request::old('inputdesignation')}}">
+              <option hidden></option>
+                @foreach($designation as $designation)
+                  <option value="{{$designation->id}}" {{Request::old('inputdesignation') == $designation->id ? 'selected' : ''  }}>{{$designation->name}}</option>
+                @endforeach
+          </select> 
+        </div>
+        <!-- <div class="col m4" align="left">
           <label for="inputgender" class="col-sm-2 control-label">Gender</label>
           <div>
+
           <label>
-            <input class="with-gap" name="inputgender" type="radio"  value="{!! Request::old('inputgender') !!}" checked="true"/>
+            <input class="with-gap" name="inputgender" id="male_radio" type="radio"  value="{!! Request::old('inputgender') !!}" checked="true"/>
             <span>Male</span>
           </label>
            <label>
-            <input class="with-gap" name="inputgender" type="radio"  value="{!! Request::old('inputgender') !!}" checked="true"/>
+            <input class="with-gap" name="inputgender" id="female_radio" type="radio"  value="{!! Request::old('inputgender') !!}" checked="true"/>
             <span>Female</span>
           </label>
           </div>
-        </div>        
+        </div>  -->       
     
   </div>
   <div class="modal-footer">
@@ -192,16 +203,17 @@
                       $("#member_id").val(detail[i].id);
                       $("#inputname").val(detail[i].name);
                       $("#inputemail").val(detail[i].emailid);
+                      $("#inputcollege").val(detail[i].clg_id);
                       $("#inputcontact").val(detail[i].contact_num);
                       $("#inputdesignation").val(detail[i].designation);
-                      $("#inputdept").val(detail[i].department);
+                      $("#inputdepartment").val(detail[i].department);
 
-                      if((detail[i].gender) == 'Male'){
-                        $("#male_radio").attr('checked', true);
-                      }
-                      if((detail[i].gender) == 'Female'){
-                        $("#female_radio").attr('checked', true);;
-                      }
+                      // if((detail[i].gender) == 'Male'){
+                      //   $("#male_radio").attr('checked', true);
+                      // }
+                      // if((detail[i].gender) == 'Female'){
+                      //   $("#female_radio").attr('checked', true);;
+                      // }
                     }
 
                       $('#modal').modal('open');

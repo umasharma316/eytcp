@@ -104,6 +104,7 @@ class eytcpController extends Controller
 		log::info('umaa');
 		$id = $request->input('id'); //Get Teachers ID
 		$teacherdetails = ElsiTeacherDtl::where(['id' => $id])->get();
+		log::info($teacherdetails);
 		return response()->json($teacherdetails);
 	}//end of editprofile
   	
@@ -113,43 +114,48 @@ class eytcpController extends Controller
 		log::info($input);
 		$input['autoOpenModal'] = true;
 
-		$messages = ['inputcontact.required' => 'The Contact Number of Person is required.',
-						'inputcontact.digits' => 'The Number of Contact Person should be of 10 digits.',
-						
+		$rules = [
+					'inputcontact' => 'required|numeric|digits_between:10,12',
+					'inputcontact.digits' => 'Phone number should be of 10 to 12 digits.',
+					'inputemail' => 'required',
+					'inputcollege' => 'required',
+					'inputdepartment' => 'required',
+					'inputdesignation' => 'required',
+					//'inputgender' => 'required'
 					];
-			
-		$validator = Validator::make($request->all(), 
-			[	'inputcontact' => 'required|digits:10',
-				
-				'inputgender' => 'required'
-			],$messages);
+		$messages = [  	
+						'email.required' => 'Email is required',
+						'inputcontact.digits' => 'Phone number should be of 10 to 12 digits',
+						'inputcontact.required' => 'Phone number is required',
+						'inputcollege.required' => 'College is required',
+						'inputdepartment.required' => 'Department is required',
+						'inputdesignation.required' => 'Designation is required',
+						//'inputgender.required' => 'Gender is required',
+					];
 
-			try
+		$validate=Validator::make($request->all(),$rules,$messages);
+
+		if($validate->fails())
+		{
+			return redirect()->route('tcp_Registration')->withErrors($validate)->withInput($input);
+		}
+		else
+		{		
+			
+			log::info('----------profile update----------');
+			log::info($request->all());
+			
+			$elsi_teacher = ElsiTeacherDtl::where('emailid', $request->inputemail)->first();
+			if($elsi_teacher!='')
 			{
-				if ($validator->fails())
-				{
-				return redirect()->back()->withErrors($validator->errors())->withInput($input);
-				}
-				else
-				{
-					log::info('----------profile update----------');
-					log::info($request->all());
-					
-					$elsi_teacher = ElsiTeacherDtl::where('emailid', $teacher->emailid)->first();
-					if($elsi_teacher!='')
-					{
-						$elsi_teacher->emailid=$input['inputemail'];
-						$elsi_teacher->contact_num = $input['inputcontact'];
-						$elsi_teacher->department = $input['inputdepartment'];
-						$elsi_teacher->designation = $input['inputdesignation'];
-						$elsi_teacher->gender = $input['inputgender'];
-						$elsi_teacher->save();					
-					}					
-				}	
+				$elsi_teacher->emailid=$request->get('inputemail');
+				$elsi_teacher->contact_num = $request->get('inputcontact');
+				$elsi_teacher->department = $request->get('inputdepartment');
+				$elsi_teacher->designation = $request->get('inputdesignation');
+				//$elsi_teacher->gender = $request->get('inputgender');
+				$elsi_teacher->save();
+				return redirect()->route('tcp_Registration')->with('success','Details has been updated successfully!');					
 			}
-			catch(Exception $e)	
-			{
-				log::info($e);
-			}
+		}
 	}
 }
